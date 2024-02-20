@@ -1,0 +1,58 @@
+                --- Programare Orientata pe Obiecte ---
+                            "League of OOP"
+
+                --- Grigore-Mandru Dimitrie-Teodor ---
+            --- Facultatea de Automatica si Calculatoare ---
+            --- Universitatea Politehnica, Bucuresti     ---
+
+Pentru realizarea jocului am utilizat doua structuri de stocare in clasa
+main : o matrice pentru stocarea tipurilor de teren si un ArrayList de eroi.
+
+Folosind informatiile din fisierul de intrare, am creat matricea de terenuri,
+am stocat in ea harta jocului, am citit eroii, am instantiat clasele de eroi
+corespunzatoare si i-am adaugat in vectorul de eroi. Am citit numarul de runde
+si apoi fiecare runda.
+
+In timpul unei runde, eroii sunt mutati in functie de statusul lor si de
+instructiunea citita din fisier, eroii afectati de DoT isi primesc damage-ul,
+iar cei ramasi in viata si fiind pe aceeasi pozitie, se lupta intre ei(acceptand
+lupta cu adversarul). Eroii care au reusit sa-si doboare adversarul si sa ramana
+in viata sunt recompensati cu experienta si pot face level up daca au nivelul
+de experienta necesar. Aceste etape se reiau la fiecare runda pana s-a epuizat
+numarul de runde.
+
+Clasa de baza in implementarea mea este clasa abstracta Hero. Aceasta este
+extinsa prin cele 4 clase corespunzatoare fiecarui erou: Knight, Pyro, Wizard si
+Rogue.
+
+In clasa Hero, variabilele sunt declarate protected(cele care sunt modificate
+in clasele extinse), respectiv private(cele modificate doar in clasa Hero), astfel
+incat ele nu pot fi accesate din exterior (Main) decat prin getters. Clasa are un
+constructor, metode care ii modifica coordonatele, care verifica statusul
+eroului (daca este paralizat si daca ar trebui sa ia DoT), care aplica DoT, care
+reduc counterul de paralysis, metode care verifica daca eroul a castigat lupta,
+metode de primit experienta si de facut level up.
+
+Toate metodele din aceasta clasa corespund oricarui erou (indiferent de tip) si nu
+depind de tipul acestora, mai putin cele care calculeaza damage-ul dat de
+spell-uri (firstSpell, secondSpell), care sunt declarate abstract si implementate in clasele extinse, 
+diferit in functie de fiecare tip de erou.
+
+Metoda fightWith primeste ca parametru un erou (inamicul) si tipul de teren
+si apeleaza cele doua functii de calcul al damage-ului dat, iar apoi scade
+suma celor 2 damage-uri din HP-ul adversarului. Aceste metode nu sunt apelate
+direct in Main, ci in metodele "accept", care primesc un erou inamic si tipul
+de teren si accepta (pornesc) lupta cu acesta. Procedeul de double dispatch
+se evidentiaza apeland in Main metoda "accept".
+
+Metodele implementate in clasa Hero sunt de tipul "final", deci nu pot fi
+suprascrise in clasele derivate.
+
+Clasele derivate ale clasei Hero contin un constructor, in care se apeleaza
+consructorul clasei de baza, apoi este setat HP-ul de baza al tipului de erou,
+HP-ul curent al eroului devine cel maxim (eroul incepe aventura cu "full hp"),
+se stabileste bonusul de HP primit la level up si numele tipului de erou. In cele
+doua metode implementate pentru cele doua spell-uri ale fiecarui erou, se calculeaza
+damage-ul total dat de cele doua spell-uri, se aplica modificatorii de teren, iar apoi
+cei de clasa, se rotunjeste damage-ul si se aduna la o variabila care stocheaza
+damage-ul total dat.
